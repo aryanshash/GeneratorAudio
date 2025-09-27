@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funny Audio Script Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="audio.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4F46E5',
+                        'secondary': '#8B5CF6',
+                        'accent': '#EC4899',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #4F46E5;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: #4338CA;
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #script-output {
+            white-space: pre-wrap;
+            min-height: 100px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .voice-control {
+            background-color: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-primary mb-6">🎙️ Funny Audio Script Generator</h1>
+        <p class="text-gray-600 text-center mb-8">Generate a custom conversation script (now supports Hindi!) and turn it into realistic, multi-speaker audio.</p>
+
+        <div class="mb-4 voice-control">
+            <h2 class="text-lg font-semibold text-gray-800 mb-2">Configure Script & Speakers</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="script-language" class="block text-sm font-medium text-gray-700">Language:</label>
+                    <select id="script-language" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                        <option value="en-US">English</option>
+                        <option value="hi-IN" selected>Hindi (हिन्दी)</option>
+                        <option value="es-US">Spanish</option>
+                        <option value="ja-JP">Japanese</option>
+                    </select>
+                </div>
+                 <div>
+                    <label for="script-length" class="block text-sm font-medium text-gray-700">Script Length/Style (e.g., 30-second reel):</label>
+                    <input type="text" id="script-length" value="30-second funny reel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="speaker1-name" class="block text-sm font-medium text-gray-700">Speaker 1 Name (e.g., 'Ramesh'):</label>
+                    <input type="text" id="speaker1-name" value="Ramesh" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                </div>
+                <div>
+                    <label for="speaker1-voice" class="block text-sm font-medium text-gray-700">Speaker 1 Voice (Smooth):</label>
+                    <select id="speaker1-voice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                        <option value="Despina" selected>Despina</option>
+                        <option value="Algieba">Algieba</option>
+                        <option value="Leda">Leda</option>
+                        <option value="Kore">Kore</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="speaker2-name" class="block text-sm font-medium text-gray-700">Speaker 2 Name (e.g., 'Sita'):</label>
+                    <input type="text" id="speaker2-name" value="Sita" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                </div>
+                <div>
+                    <label for="speaker2-voice" class="block text-sm font-medium text-gray-700">Speaker 2 Voice (Casual):</label>
+                    <select id="speaker2-voice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary p-2">
+                        <option value="Zubenelgenubi" selected>Zubenelgenubi</option>
+                        <option value="Pulcherrima">Pulcherrima</option>
+                        <option value="Puck">Puck</option>
+                        <option value="Zephyr">Zephyr</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button id="generate-button" class="w-full btn-primary flex items-center justify-center">
+            <span id="button-text">Generate & Play Audio</span>
+            <div id="loading-indicator" class="loading-spinner hidden ml-3"></div>
+        </button>
+        
+        <div id="message-box" class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg hidden" role="alert"></div>
+
+        <h2 class="text-xl font-bold text-primary mt-8 mb-3">Generated Script:</h2>
+        <pre id="script-output" class="text-gray-800"></pre>
+
+        <div class="flex justify-center mt-6">
+            <audio id="audio-player" controls class="w-full rounded-lg shadow-md hidden"></audio>
+        </div>
+
+    </div>
+
+
+</body>
+</html>
